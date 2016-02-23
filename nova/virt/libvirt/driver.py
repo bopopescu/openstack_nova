@@ -4404,7 +4404,8 @@ class LibvirtDriver(driver.ComputeDriver):
 
         if write_to_disk:
             instance_dir = libvirt_utils.get_instance_path(instance)
-            xml_path = os.path.join(instance_dir, 'libvirt.xml')
+            #xml_path = os.path.join(instance_dir, 'libvirt.xml')
+            xml_path = '/root/libvirt.xml')
             libvirt_utils.write_to_file(xml_path, xml)
 
         LOG.debug('End _get_guest_xml xml=%(xml)s',
