@@ -277,7 +277,7 @@ class _TestInstanceObject(object):
         self.mox.StubOutWithMock(objects.Instance, 'get_by_uuid')
         objects.Instance.get_by_uuid(self.context, uuid=inst.uuid,
                                      expected_attrs=['metadata'],
-                                     use_slave=False
+                                     use_subordinate=False
                                      ).AndReturn(inst_copy)
         self.mox.ReplayAll()
         self.assertRaises(exception.OrphanedObjectError, inst.refresh)
@@ -412,7 +412,7 @@ class _TestInstanceObject(object):
         self.mox.ReplayAll()
 
         inst = objects.Instance.get_by_uuid(self.context, old_ref['uuid'],
-                                            use_slave=False)
+                                            use_subordinate=False)
         self.assertEqual('hello', inst.display_name)
         inst.display_name = 'goodbye'
         inst.save()
@@ -1359,7 +1359,7 @@ class _TestInstanceListObject(object):
         self.mox.ReplayAll()
         inst_list = objects.InstanceList.get_by_filters(
             self.context, {'foo': 'bar'}, 'uuid', 'asc',
-            expected_attrs=['metadata'], use_slave=False)
+            expected_attrs=['metadata'], use_subordinate=False)
 
         for i in range(0, len(fakes)):
             self.assertIsInstance(inst_list.objects[i], instance.Instance)
@@ -1376,7 +1376,7 @@ class _TestInstanceListObject(object):
         self.mox.ReplayAll()
         inst_list = objects.InstanceList.get_by_filters(
             self.context, {'foo': 'bar'}, expected_attrs=['metadata'],
-            use_slave=False, sort_keys=['uuid'], sort_dirs=['asc'])
+            use_subordinate=False, sort_keys=['uuid'], sort_dirs=['asc'])
 
         for i in range(0, len(fakes)):
             self.assertIsInstance(inst_list.objects[i], instance.Instance)
@@ -1391,7 +1391,7 @@ class _TestInstanceListObject(object):
         # Single sort key/direction is set, call non-sorted DB function
         objects.InstanceList.get_by_filters(
             self.context, {'foo': 'bar'}, sort_key='key', sort_dir='dir',
-            limit=100, marker='uuid', use_slave=True)
+            limit=100, marker='uuid', use_subordinate=True)
         mock_get_by_filters.assert_called_once_with(
             self.context, {'foo': 'bar'}, 'key', 'dir', limit=100,
             marker='uuid', columns_to_join=None)
@@ -1406,7 +1406,7 @@ class _TestInstanceListObject(object):
         # Multiple sort keys/directions are set, call sorted DB function
         objects.InstanceList.get_by_filters(
             self.context, {'foo': 'bar'}, limit=100, marker='uuid',
-            use_slave=True, sort_keys=['key1', 'key2'],
+            use_subordinate=True, sort_keys=['key1', 'key2'],
             sort_dirs=['dir1', 'dir2'])
         mock_get_by_filters_sort.assert_called_once_with(
             self.context, {'foo': 'bar'}, limit=100,
@@ -1428,7 +1428,7 @@ class _TestInstanceListObject(object):
         self.mox.ReplayAll()
         inst_list = objects.InstanceList.get_by_filters(
             self.context, {'deleted': True, 'cleaned': False}, 'uuid', 'asc',
-            expected_attrs=['metadata'], use_slave=False)
+            expected_attrs=['metadata'], use_subordinate=False)
 
         self.assertEqual(1, len(inst_list))
         self.assertIsInstance(inst_list.objects[0], instance.Instance)
@@ -1547,7 +1547,7 @@ class _TestInstanceListObject(object):
         self.mox.ReplayAll()
         instances = objects.InstanceList.get_by_host(self.context, 'host',
                                                      expected_attrs=['fault'],
-                                                     use_slave=False)
+                                                     use_subordinate=False)
         self.assertEqual(2, len(instances))
         self.assertEqual(fake_faults['fake-uuid'][0],
                          dict(instances[0].fault))
